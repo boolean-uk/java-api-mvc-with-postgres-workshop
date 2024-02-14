@@ -1,8 +1,10 @@
 package com.booleanuk;
-import com.booleanuk.api.Customer;
-import com.booleanuk.api.CustomerRepository;
+
+import com.booleanuk.api.customer.Customer;
 
 import java.util.Scanner;
+
+import com.booleanuk.api.customer.CustomerRepository;
 
 public class Main {
     public static void main(String[] args) {

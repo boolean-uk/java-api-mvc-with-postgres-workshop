@@ -1,4 +1,4 @@
-package com.booleanuk.api;
+package com.booleanuk.api.customer;
 
 public class Customer {
     private long id;
