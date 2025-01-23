@@ -1,6 +1,4 @@
-package com.booleanuk;
-import com.booleanuk.api.Customer;
-import com.booleanuk.api.CustomerRepository;
+package com.booleanuk.api.customers;
 
 import java.util.Scanner;
 

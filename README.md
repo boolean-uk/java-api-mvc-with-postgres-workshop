@@ -169,7 +169,7 @@ public void connectToDatabase() throws SQLException  {
 
 ```java
 package com.booleanuk;
-import com.booleanuk.api.CustomerRepository;
+import com.booleanuk.api.customers.CustomerRepository;
 
 public class Main {
     public static void main(String[] args) {
@@ -266,8 +266,8 @@ public class Customer {
 
 ```java
 package com.booleanuk;
-import com.booleanuk.api.Customer;
-import com.booleanuk.api.CustomerRepository;
+import com.booleanuk.api.customers.Customer;
+import com.booleanuk.api.customers.CustomerRepository;
 
 public class Main {
     public static void main(String[] args) {

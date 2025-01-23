@@ -1,8 +1,9 @@
-package com.booleanuk.api;
+package com.booleanuk.api.stocks;
 
-import javax.sql.DataSource;
+import com.booleanuk.api.customers.Customer;
 import org.postgresql.ds.PGSimpleDataSource;
 
+import javax.sql.DataSource;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.sql.*;
@@ -10,8 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-
-public class CustomerRepository {
+public class StockRepository {
     DataSource datasource;
     String dbUser;
     String dbURL;
@@ -19,7 +19,7 @@ public class CustomerRepository {
     String dbDatabase;
     Connection connection;
 
-    public CustomerRepository() throws SQLException  {
+    public StockRepository() throws SQLException {
         this.getDatabaseCredentials();
         this.datasource = this.createDataSource();
         this.connection = this.datasource.getConnection();
@@ -47,77 +47,72 @@ public class CustomerRepository {
         return dataSource;
     }
 
-
-
-    public List<Customer> getAll() throws SQLException  {
-        List<Customer> everyone = new ArrayList<>();
-        PreparedStatement statement = this.connection.prepareStatement("SELECT * FROM Customers");
+    public List<Stock> getAll() throws SQLException {
+        List<Stock> everyone = new ArrayList<>();
+        PreparedStatement statement = this.connection.prepareStatement("SELECT * FROM Stocks");
 
         ResultSet results = statement.executeQuery();
 
         while (results.next()) {
-            Customer theCustomer = new Customer(results.getLong("id"), results.getString("name"), results.getString("address"), results.getString("email"), results.getString("phone"));
-            everyone.add(theCustomer);
+            Stock theStock = new Stock(results.getLong("id"), results.getString("name"), results.getString("category"), results.getString("description"));
+            everyone.add(theStock);
         }
         return everyone;
     }
 
-    public Customer get(long id) throws SQLException {
-        PreparedStatement statement = this.connection.prepareStatement("SELECT * FROM Customers WHERE id = ?");
+    public Stock get(long id) throws SQLException {
+        PreparedStatement statement = this.connection.prepareStatement("SELECT * FROM Stocks WHERE id = ?");
         // Choose set**** matching the datatype of the missing element
         statement.setLong(1, id);
         ResultSet results = statement.executeQuery();
-        Customer customer = null;
+        Stock stock = null;
         if (results.next()) {
-            customer = new Customer(results.getLong("id"), results.getString("name"), results.getString("address"), results.getString("email"), results.getString("phone"));
+            stock = new Stock(results.getLong("id"), results.getString("name"), results.getString("category"), results.getString("description"));
         }
-        return customer;
+        return stock;
     }
 
-    public Customer update(long id, Customer customer) throws SQLException {
-        String SQL = "UPDATE Customers " +
+    public Stock update(long id, Stock stock) throws SQLException {
+        String SQL = "UPDATE Stocks " +
                 "SET name = ? ," +
-                "address = ? ," +
-                "email = ? ," +
-                "phone = ? " +
+                "category = ? ," +
+                "description = ? ," +
                 "WHERE id = ? ";
         PreparedStatement statement = this.connection.prepareStatement(SQL);
-        statement.setString(1, customer.getName());
-        statement.setString(2, customer.getAddress());
-        statement.setString(3, customer.getEmail());
-        statement.setString(4, customer.getPhoneNumber());
-        statement.setLong(5, id);
+        statement.setString(1, stock.getName());
+        statement.setString(2, stock.getCategory());
+        statement.setString(3, stock.getDescription());
+        statement.setLong(4, id);
         int rowsAffected = statement.executeUpdate();
-        Customer updatedCustomer = null;
+        Stock updatedStock = null;
         if (rowsAffected > 0) {
-            updatedCustomer = this.get(id);
+            updatedStock = this.get(id);
         }
-        return updatedCustomer;
+        return updatedStock;
     }
 
-    public Customer delete(long id) throws SQLException {
-        String SQL = "DELETE FROM Customers WHERE id = ?";
+    public Stock delete(long id) throws SQLException {
+        String SQL = "DELETE FROM Stocks WHERE id = ?";
         PreparedStatement statement = this.connection.prepareStatement(SQL);
-        // Get the customer we're deleting before we delete them
-        Customer deletedCustomer = null;
-        deletedCustomer = this.get(id);
+        // Get the stock we're deleting before we delete it
+        Stock deletedStock = null;
+        deletedStock = this.get(id);
 
         statement.setLong(1, id);
         int rowsAffected = statement.executeUpdate();
         if (rowsAffected == 0) {
-            //Reset the customer we're deleting if we didn't delete them
-            deletedCustomer = null;
+            //Reset the stock we're deleting if we didn't delete it
+            deletedStock = null;
         }
-        return deletedCustomer;
+        return deletedStock;
     }
 
-    public Customer add(Customer customer) throws SQLException {
-        String SQL = "INSERT INTO Customers(name, address, email, phone) VALUES(?, ?, ?, ?)";
+    public Stock add(Stock stock) throws SQLException {
+        String SQL = "INSERT INTO Stocks(name, category, description) VALUES(?, ?, ?)";
         PreparedStatement statement = this.connection.prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS);
-        statement.setString(1, customer.getName());
-        statement.setString(2, customer.getAddress());
-        statement.setString(3, customer.getEmail());
-        statement.setString(4, customer.getPhoneNumber());
+        statement.setString(1, stock.getName());
+        statement.setString(2, stock.getCategory());
+        statement.setString(3, stock.getDescription());
         int rowsAffected = statement.executeUpdate();
         long newId = 0;
         if (rowsAffected > 0) {
@@ -128,11 +123,15 @@ public class CustomerRepository {
             } catch (Exception e) {
                 System.out.println("Oops: " + e);
             }
-            customer.setId(newId);
+            stock.setId(newId);
         } else {
-            customer = null;
+            stock = null;
         }
-        return customer;
+        return stock;
     }
-}
 
+
+
+
+
+}
